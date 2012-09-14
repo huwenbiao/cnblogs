@@ -718,11 +718,11 @@
 (defun cnblogs-setup-blog ()
   (interactive)
   (setq cnblogs-blog-id
-	(read-string "输入你的博客ID：" nil nil))
+	(read-string "Your blog ID:" nil nil))
   (setq cnblogs-user-name
-	(read-string "输入你的用户名：" nil nil))
+	(read-string "Your username:" nil nil))
   (setq cnblogs-user-passwd
-	(read-passwd "输入你的密码：" nil ))
+	(read-passwd "Your password:" nil ))
   (setq cnblogs-server-url
 	(concat "http://www.cnblogs.com/"
 		cnblogs-blog-id
@@ -845,7 +845,7 @@
 (defun cnblogs-get-post ()
   (interactive)
   (let* ((postid
-	  (read-string "输入要获取的随笔ID："))
+	  (read-string "Post ID："))
 	 (post
 	  (condition-case ()
 	      (cnblogs-metaweblog-get-post postid)
