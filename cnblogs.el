@@ -696,7 +696,7 @@
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;功能函数;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-(defun cnblogs-import-file ()
+(defun cnblogs-import-current-file ()
   "将当前文件加入到库中（增加到博文项cnblogs-entry-list中）"
   (interactive)
   (let ((src-file (buffer-file-name)))
@@ -708,10 +708,23 @@
 	  (message "Succeed!"))
       (message "Failed: UNSUPPORTED file!"))))
 
+(defun cnblogs-import-file ()
+  "添加一个文件加入到库中（增加到博文项cnblogs-entry-list中）"
+  (interactive)
+  (let ((src-file (read-file-name "Import file: ")))
+    (if (member (file-name-extension src-file)
+		cnblogs-src-file-extension-list)
+	(progn 
+	  (cnblogs-push-src-file-to-entry-list src-file)
+	  (cnblogs-save-entry-list)
+	  (message "Succeed!"))
+      (message "Failed: UNSUPPORTED file!"))))
+
+
 (defun cnblogs-import-folder ()
   "递归添加一个目录中的所有合法文件到库中，这个是给用户用的，主要是调用cnblogs-import-directory"
   (interactive)
-  (let ((directory (read-string "Input the folder: " "~/")))
+  (let ((directory (read-directory-name "Import folder: ")))
     (cnblogs-import-directory directory)
     (cnblogs-save-entry-list)))
 
@@ -923,3 +936,5 @@
 (add-hook 'cnblogs-minor-mode-hook 'cnblogs-init) ;打开cnblogs-minor-mode时再加载数据等初始化
 
 (provide 'cnblogs)
+
+ 
