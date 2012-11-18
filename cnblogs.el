@@ -11,7 +11,7 @@
   "博客园客户端分组"
   :group 'emacs)
 
-(defun cnblogs-define-variables () ;; todo: 变量以后要改成nil
+(defun cnblogs-define-variables ()
   "定义及初始化各变量"
   (defcustom cnblogs-server-url nil
     "MetaWeblog访问地址"
@@ -196,7 +196,7 @@
     (print cnblogs-category-list
 	   (current-buffer))))
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;底层函数;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+ ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;底层函数;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (defun cnblogs-check-legal-for-publish (src-file)
   "检查文件是否可以发布"
   (and
@@ -206,7 +206,7 @@
      (progn
        (message "Failed: UNSUPPORTED file!")
        nil))
-   
+
    (if (equal (cnblogs-check-src-file-state (buffer-file-name))
 	      "PUBLISHED")
        (progn
@@ -239,7 +239,7 @@
      (progn
        (message "Failed: UNSUPPORTED file!")
        nil))
-   
+
    (if (equal (cnblogs-check-src-file-state (buffer-file-name))
 	      "PUBLISHED")
        t
@@ -262,7 +262,7 @@
     (while flag
       (progn
 	(setq flag nil id (1+ id))
-	
+
 	(mapc (lambda (entry)
 		(and (equal id 
 			    (car entry))
@@ -310,7 +310,7 @@
 				    "PUBLISHED"))))
 		(setq index (1+ index))))
 	    cnblogs-entry-list)
-      
+
 					;还没有插入则新建项
       (or done
 	  (push 
@@ -352,7 +352,7 @@
 				     src-file)))
 		       (setq index (1+ index))))
 		   cnblogs-entry-list)
-	     
+
 					;还没有插入则新建项
 	     (or done
 		 (push 
@@ -368,7 +368,7 @@
 			src-file
 					;state
 			"UNPUBLISHED")
-		  
+
 		  cnblogs-entry-list))))))
 
 (defun cnblogs-assign-post-to-file (post src-file)
@@ -451,7 +451,7 @@
 	;;media-path name
 	(cons "name" 
 	      (file-name-nondirectory media-path))
-	
+
 	;; bits
 	(cons "bits"
 	      (base64-encode-string
@@ -471,10 +471,13 @@
 	    (cons "categories"
 		  (let ((categories-list
 			 (cnblogs-categories-string-to-list
-			  (cnblogs-fetch-field "KEYWORDS"))))
+			  (cnblogs-fetch-field "CATEGORIES"))))
 		    (or
 		     categories-list
 		     '("[随笔分类]未分类"))))
+	    ;; tags
+	    (cons "mt_keywords"
+		  (cnblogs-fetch-field "KEYWORDS"))
 
 	    ;; dateCreated
 	    (cons "dateCreated"
@@ -505,18 +508,21 @@
 	 (cons "title"
 	       (or (cnblogs-fetch-field "TITLE")
 		   "新随笔"))
-	 
-	 
+
+
 	 ;; categories
 	 (cons "categories"
 	       (let ((categories-list
 		      (cnblogs-categories-string-to-list
-		       (cnblogs-fetch-field "KEYWORDS"))))
+		       (cnblogs-fetch-field "CATEGORIES"))))
 		 (or
 		  categories-list
 		  '("[随笔分类]未分类"))))
 
-	 
+	 ;; tags
+	 (cons "mt_keywords"
+	       (cnblogs-fetch-field "KEYWORDS"))
+
 	 ;; dateCreated
 	 (cons "dateCreated"
 	       (list 
@@ -611,7 +617,7 @@
 			      (cnblogs-metaweblog-new-media-object 
 			       (cnblogs-make-media-object-file-data (substring
 								     media-path 1))))))))
-		
+
 		(if media-url
 		    (progn
 		      (setq current
@@ -639,7 +645,7 @@
    ((equal mode-name
 	   "Org")
     (cnblogs-org-mode-buffer-to-post))
-   
+
    (t
     (cnblogs-other-mode-buffer-to-post))))
 
@@ -683,7 +689,7 @@
 
 (defun cnblogs-import-directory (directory)
   ;;滤掉所有以.开关的文件，这样就没有了..和.以及所有的隐藏文件
-  (let ((files (directory-files directoryn t "^[^\.].*" t)))
+  (let ((files (directory-files directory t "^[^\.].*" t)))
     (mapc (lambda (file)
 					;目录
 	    (cond ((file-directory-p file)
@@ -913,6 +919,71 @@
 	      (message "获取用户博客信息成功！"))
 	  (error cnblogs-blog-info))))
 
+(defun cnblogs-add-props (str plist)
+  "将faces属性plist赋给str，并返回这个str"
+  (set-text-properties 0 (length str) plist str)
+  str)
+;;[c][b]
+(defun cnblogs-category-selection-toggle (c)
+  "根据字符c查找要触发的分类，然后触发这个分类"
+  (let* ((begin (string-match (concat "[" c "]" [ ]*) 
+			      (buffer-substring (string-match "随笔分类" (buffer-string)) (point-max)))
+
+		(substring (buffer-substring (point-min) (point-max)) 23728 23731 )
+		))))
+(defun cnblogs-category-selection ()
+  (interactive)
+  (save-window-excursion
+    (delete-other-windows)
+    (split-window-vertically)
+    (org-switch-to-buffer-other-window (get-buffer-create " *Cnblogs categories*"))
+    (erase-buffer)
+    
+    ;; 列出当前已经选择的分类
+    (insert "Current:    \n")
+    
+    ;; 列出随笔分类
+    (insert "\n\n随笔分类:    \n")
+    (let* ((idx ?0)
+	   (ctgr-list (remove-if-not (lambda (ctgr)
+				       (equal (substring ctgr 1 5) "随笔分类"))
+				     cnblogs-category-list))
+	   (maxlen (apply 'max (mapcar 'length ctgr-list))))
+      
+      (mapc (lambda (ctgr)
+	      (insert "[" idx "]" (format "%s  " (substring ctgr 6)))
+	      (setq idx (1+ idx)))
+	    ctgr-list))
+
+    ;; 列出网站类分
+    (insert "\n\n网站分类:    \n")
+    (let* ((idx ?A)
+	   (ctgr-list (remove-if-not (lambda (ctgr)
+				       (equal (substring ctgr 1 5) "网站分类"))
+				     cnblogs-category-list))
+	   (maxlen (apply 'max (mapcar 'length ctgr-list))))
+      (mapc (lambda (ctgr)
+	      (insert "[" idx "]" (format "%s  " (substring ctgr 6)))
+	      (setq idx (1+ idx)
+		    ))
+	    ctgr-list))
+    (insert "\n\n其他分类:    \n")
+    ;; 列出其他分类
+    (mapc (lambda (ctgr)
+	    (if (equal (substring ctgr 1 3) "发布")
+		(insert (format "%s   " ctgr)))
+	    )
+	  cnblogs-category-list)
+    (message "[0..9..a-z..]:Toggle [SPC]:clear [RET]:accept")
+    ;; 处理分类选择
+    (catch 'exit
+      (while t
+	(let ((c (read-char-exclusive)))
+	  (cond
+	   ((= c ?\r) (throw exit t))
+	   (t (do nothing)
+	      )
+	   ))))))
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;mode设置;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (cnblogs-define-variables)		;定义变量，可以不用定义成函数
@@ -936,5 +1007,3 @@
 (add-hook 'cnblogs-minor-mode-hook 'cnblogs-init) ;打开cnblogs-minor-mode时再加载数据等初始化
 
 (provide 'cnblogs)
-
- 
