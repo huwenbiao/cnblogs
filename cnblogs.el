@@ -477,7 +477,9 @@
 		     '("[随笔分类]未分类"))))
 	    ;; tags
 	    (cons "mt_keywords"
-		  (cnblogs-fetch-field "KEYWORDS"))
+		  (or 
+		   (cnblogs-fetch-field "KEYWORDS")
+		   ""))
 
 	    ;; dateCreated
 	    (cons "dateCreated"
