@@ -528,7 +528,9 @@
 
 	 ;; tags
 	 (cons "mt_keywords"
-	       (cnblogs-fetch-field "KEYWORDS"))
+	       (or
+		(cnblogs-fetch-field "KEYWORDS")
+		""))
 
 	 ;; dateCreated
 	 (cons "dateCreated"
@@ -605,7 +607,7 @@
   "处理BUF-STR中的媒体文件，返回处理后的字符串"
   (mapc (lambda (suffix)
 	  (let ((regexp 
-		 (concat "[a-z]?[:]?[^:*\"?<>|]+."
+		 (concat "[file]*[:]?[/\\]*[a-z]?[:]?[^:*\"?<>|#]+."
 			 suffix))
 		(current 0))
 	    (while (string-match regexp
@@ -615,20 +617,10 @@
 					       buf-str))
 		     (media-url
 		      (save-match-data
-			(or
-			 (and (file-exists-p media-path)
-			      (cnblogs-metaweblog-new-media-object 
-			       (cnblogs-make-media-object-file-data
-				media-path)))
-			 (and (file-exists-p (substring media-path 1))
-			      (cnblogs-metaweblog-new-media-object 
-			       (cnblogs-make-media-object-file-data (substring
-								     media-path 1))))
-			 ;;下面这段代码是最近加的，但没有解决问题，因此替换代码出了问题
-			 (and (file-exists-p (substring media-path 4))
-			      (cnblogs-metaweblog-new-media-object
-			       (cnblogs-make-media-object-file-data (substring
-								     media-path 4))))))))
+			(and (file-exists-p media-path)
+			     (cnblogs-metaweblog-new-media-object 
+			      (cnblogs-make-media-object-file-data
+			       media-path))))))
 
 		(if media-url
 		    (progn
