@@ -692,8 +692,10 @@
     (error nil)))
 
 (defun cnblogs-import-directory (directory)
-  ;;滤掉所有以.开关的文件，这样就没有了..和.以及所有的隐藏文件
-  (let ((files (directory-files directory t "^[^\.].*" t)))
+  ;; 滤掉所有以.开头的文件，这样就没有了..和.以及所有的隐藏文件
+  ;; 滤掉所有以~结尾的文件，这样就没有了自动备份
+
+  (let ((files (directory-files directory t "^[^\.].*[^~]$" t)))
     (mapc (lambda (file)
 					;目录
 	    (cond ((file-directory-p file)
