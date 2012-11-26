@@ -1013,3 +1013,4 @@
 (add-hook 'cnblogs-minor-mode-hook 'cnblogs-init) ;打开cnblogs-minor-mode时再加载数据等初始化
 
 (provide 'cnblogs)
+
