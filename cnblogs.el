@@ -444,7 +444,7 @@
 			  idx2)))
       nil)))
 
-(defun cnblogs-make-media-object-file-data (media-path) ;todo: type以后加上
+(defun cnblogs-make-media-object-file-data (media-path) ;todo: type可能要详细分类
   "根据给出的文件路径返回相应的FileData，文件不存在返回nil"
   (and (file-exists-p media-path)
        (list
@@ -457,7 +457,8 @@
 	      (base64-encode-string
 	       (with-temp-buffer
 		 (insert-file-contents-literally media-path)
-		 (buffer-string)))))))
+		 (buffer-string))))
+	(cons "type" "image/jpg"))))
 
 
 (defun cnblogs-org-mode-buffer-to-post ()
