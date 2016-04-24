@@ -499,7 +499,7 @@
 
 	    ;; description
 	    (cons "description"
-		  (with-current-buffer (org-export-as-html 3 nil nil "*Org HTML Export*")
+      (with-current-buffer (org-html-export-as-html)
 		    (let ((buf-str 
 			   (cnblogs-replace-media-object-location
 			    (buffer-substring-no-properties 
