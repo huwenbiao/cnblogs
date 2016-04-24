@@ -31,6 +31,11 @@ Table of Contents
   (require 'cnblogs)
 
 
+  将临时BUF设置为不可见，否则发布博客之后光标会跳转到另外一个buf中。
+
+
+  (setq org-export-show-temporary-export-buffer nil)
+
 1.2 使用 
 ---------
    先设置博客M-x cnblogs-setup-blog，其中blog ID就是博客地址中的那个博客名称（如我的就是Open_Source）。之后询问是否将网上的博客同步到本地，如果博客较多，可能需要很长时间。然后可以M-x cnblogs-import-file或者cnblogs-import-folder将本地的博客文件（即你的org源文件或者html源文件）导入，导入过程中遇到同名的博客会问是否将这个源文件与网络上的博客关联起来。
