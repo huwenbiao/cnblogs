@@ -29,7 +29,12 @@ Table of Contents
 
 
   (require 'cnblogs)
-
+  
+  Emacs 26.3 经常出现一个问题： 报 metaweblog.el 中的函数不存在,可以通过下面代码修复：
+  ``` elisp
+  (add-hook 'org-mode-hook (lambda ()
+	  (load-file "~/path/to/your/metaweblog.el")))
+  ```
 
   将临时BUF设置为不可见，否则发布博客之后光标会跳转到另外一个buf中。
 
