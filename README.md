@@ -27,9 +27,9 @@ Table of Contents
 ```
   然后再：
 
-
+``` elisp
   (require 'cnblogs)
-
+```
 
 
 1.2 使用 
