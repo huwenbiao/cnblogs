@@ -21,10 +21,10 @@ Table of Contents
 ---------
    下载之后将其中的el文件放到一个目录中（如~/.emacs.d/misc/），然后将这个目录加入到load-path中：
 
-
+```elisp
   (add-to-list 'load-path
                "~/.emacs.d/misc/")
-
+```
   然后再：
 
 
@@ -38,8 +38,9 @@ Table of Contents
 
   将临时BUF设置为不可见，否则发布博客之后光标会跳转到另外一个buf中。
 
-
+```elisp
   (setq org-export-show-temporary-export-buffer nil)
+```
 
 1.2 使用 
 ---------
@@ -47,8 +48,8 @@ Table of Contents
 
    启动cnblogs副模式可以M-x cnblogs-minor-mode，也可以自动启动：
 
-
+```elisp
   (add-hook 'org-mode-hook (lambda ()
                              (cnblogs-minor-mode)))
-
+```
    
