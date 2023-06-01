@@ -21,20 +21,16 @@ Table of Contents
 ---------
    下载之后将其中的el文件放到一个目录中（如~/.emacs.d/misc/），然后将这个目录加入到load-path中：
 
-
+```elisp
   (add-to-list 'load-path
                "~/.emacs.d/misc/")
-
+```
   然后再：
 
-
+``` elisp
   (require 'cnblogs)
+```
 
-
-  将临时BUF设置为不可见，否则发布博客之后光标会跳转到另外一个buf中。
-
-
-  (setq org-export-show-temporary-export-buffer nil)
 
 1.2 使用 
 ---------
@@ -42,8 +38,22 @@ Table of Contents
 
    启动cnblogs副模式可以M-x cnblogs-minor-mode，也可以自动启动：
 
-
+```elisp
   (add-hook 'org-mode-hook (lambda ()
                              (cnblogs-minor-mode)))
+```
 
-   
+1.3 常见问题
+---------
+
+1. 将临时BUF设置为不可见，否则发布博客之后光标会跳转到另外一个buf中。
+```elisp
+  (setq org-export-show-temporary-export-buffer nil)
+```
+
+2. 报 `metaweblog.el` 中的函数不存在, 如 `cnblogs-metaweblog-get-categories`
+可以通过下面代码手动在 `org-mode` 时引入 `metaweblog.el` 修复：
+  ``` elisp
+  (add-hook 'org-mode-hook (lambda ()
+	  (load-file "~/path/to/your/metaweblog.el")))
+  ```
